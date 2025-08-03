@@ -1,0 +1,11 @@
+/node_modules
+/dist
+/build
+/public
+/src
+/test
+/docs
+/examples
+/src/assets/images
+/src/assets/videos
+/src/assets/fonts
