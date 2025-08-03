@@ -1,48 +1,56 @@
 <template>
   <div class="section">
-    <div class="mountain-container">
+    <div class="mountain-container" :style="{ transform: `translate(-50%, -50%) scale(${scale})` }">
       <!-- 背景層 -->
-      <div class="background parallax-layer"></div>
+      <div class="background  "></div>
       
       <!-- 霧氣層 -->
-      <div class="fog-6 parallax-layer"></div>
+      <div class="fog-6  "></div>
       
       <!-- 低層山脈 -->
       <div class="mountain-low">
-        <div class="fog-4 parallax-layer"></div>
-        <div class="mountain-10 parallax-layer"></div>
-        <div class="mountain-7 parallax-layer"></div>
-        <div class="mountain-9 parallax-layer"></div>
+        <div class="fog-4  "></div>
+        <div class="mountain-10  "></div>
+        <div class="mountain-7  "></div>
+        <div class="mountain-9  "></div>
       </div>
       
       <!-- 中層山脈 -->
       <div class="mountain-mid">
-        <div class="fog-3 parallax-layer"></div>
-        <div class="mountain-8 parallax-layer"></div>
-        <div class="mountain-6 parallax-layer"></div>
-        <div class="fog-7 parallax-layer"></div>
-        <div class="fog-5 parallax-layer"></div>
-        <div class="website-text parallax-layer">wedsite</div>
-        <div class="mountain-5 parallax-layer"></div>
+        <div class="fog-3  "></div>
+        <div class="mountain-8  "></div>
+        <div class="mountain-6  "></div>
+        <div class="fog-7  "></div>
+        <div class="fog-5  "></div>
+        <div class="website-text">wedsite</div>
+        <div class="mountain-5  "></div>
       </div>
       
       <!-- 高層山脈 -->
       <div class="mountain-high">
-        <div class="mountain-3 parallax-layer"></div>
-        <div class="mountain-1 parallax-layer"></div>
-        <div class="mountain-4 parallax-layer"></div>
-        <div class="fog-1 parallax-layer"></div>
-        <div class="mountain-2 parallax-layer"></div>
-        <div class="fog-2 parallax-layer"></div>
-        <div class="modern-text parallax-layer">modern</div>
+        <div class="mountain-3  "></div>
+        <div class="mountain-1  "></div>
+        <div class="mountain-4  "></div>
+        <div class="fog-1  "></div>
+        <div class="mountain-2  "></div>
+        <div class="fog-2"></div>
+        <div class="modern-text  ">modern</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import parallaxConfig from '../config/parallax-config.json'
+
+const scale = ref(1)
+
+const updateScale = () => {
+  const screenWidth = window.innerWidth
+  const originalWidth = 3077
+  scale.value = screenWidth / originalWidth
+}
 
 const handleMouseMove = (e) => {
   const centerX = window.innerWidth / 2
@@ -56,7 +64,7 @@ const handleMouseMove = (e) => {
 
     for (const elementKey in layer.elements) {
       // Skip text elements
-      if (elementKey === 'website_text' || elementKey === 'modern_text') {
+      if (elementKey === 'fog-2' || elementKey === 'website_text' || elementKey === 'modern_text') {
         continue
       }
 
@@ -87,6 +95,7 @@ onMounted(() => {
       }
     }
   }
+  updateScale()
   document.addEventListener('mousemove', handleMouseMove)
 })
 
@@ -105,8 +114,8 @@ onUnmounted(() => {
 .section {
     position: relative;
     width: 100vw;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .mountain-container {
@@ -115,7 +124,6 @@ onUnmounted(() => {
     height: 2000px;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
     overflow: hidden;
 }
 
@@ -275,7 +283,6 @@ onUnmounted(() => {
     font-size: 240px;
     line-height: 1.199em;
     color: #FFFFFF;
-    z-index: 5;
 }
 
 .mountain-5 {
@@ -379,10 +386,6 @@ onUnmounted(() => {
     z-index: 7;
 }
 
-/* 視差效果 */
-.parallax-layer {
-    transition: transform 0.1s ease-out;
-}
 
 /* 響應式設計 */
 @media (max-width: 768px) {
