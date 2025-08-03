@@ -1,0 +1,142 @@
+{
+  "backgroundLayer": {
+    "layerMultiplier": 0.4,
+    "elements": {
+      "background": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": -1199,
+        "originalY": -1601
+      },
+      "fog_6": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": -274,
+        "originalY": 933
+      }
+    }
+  },
+  "mountainLow": {
+    "layerMultiplier": 0.3,
+    "elements": {
+      "fog_4": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 1174,
+        "originalY": 679
+      },
+      "mountain_10": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 858,
+        "originalY": 990
+      },
+      "mountain_7": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 1671,
+        "originalY": 611
+      },
+      "mountain_9": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 204,
+        "originalY": 439
+      }
+    }
+  },
+  "mountainMid": {
+    "layerMultiplier": 0.2,
+    "elements": {
+      "fog_3": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 423,
+        "originalY": 304
+      },
+      "mountain_8": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 378,
+        "originalY": 409
+      },
+      "mountain_6": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 2465,
+        "originalY": 160
+      },
+      "fog_7": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": -288,
+        "originalY": 409
+      },
+      "fog_5": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 1176,
+        "originalY": 765
+      },
+      "mountain_5": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 1317,
+        "originalY": 978
+      },
+      "website_text": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 1294,
+        "originalY": 870
+      }
+    }
+  },
+  "mountainHigh": {
+    "layerMultiplier": 0.1,
+    "elements": {
+      "mountain_3": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 2667,
+        "originalY": 710
+      },
+      "mountain_1": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": -216,
+        "originalY": 20
+      },
+      "mountain_4": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 22,
+        "originalY": 799
+      },
+      "fog_1": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 700,
+        "originalY": 838
+      },
+      "mountain_2": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 1764,
+        "originalY": 592
+      },
+      "fog_2": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": -61,
+        "originalY": 717
+      },
+      "modern_text": {
+        "speedX": 0.1,
+        "speedY": 0.05,
+        "originalX": 895,
+        "originalY": 749
+      }
+    }
+  }
+}
