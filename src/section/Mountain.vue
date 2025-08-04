@@ -2,40 +2,42 @@
   <div class="section">
     <div class="mountain-container" :style="{ transform: `translate(-50%, -50%) scale(${scale})` }">
       <!-- 背景層 -->
-      <div class="background  "></div>
+      <div class="background"></div>
       
       <!-- 霧氣層 -->
-      <div class="fog-6  "></div>
+      <div class="fog-6"></div>
       
       <!-- 低層山脈 -->
       <div class="mountain-low">
-        <div class="fog-4  "></div>
-        <div class="mountain-10  "></div>
-        <div class="mountain-7  "></div>
-        <div class="mountain-9  "></div>
+        <div class="fog-4"></div>
+        <div class="mountain-10"></div>
+        <div class="mountain-7"></div>
+        <div class="mountain-9"></div>
       </div>
       
       <!-- 中層山脈 -->
       <div class="mountain-mid">
-        <div class="fog-3  "></div>
-        <div class="mountain-8  "></div>
-        <div class="mountain-6  "></div>
-        <div class="fog-7  "></div>
-        <div class="fog-5  "></div>
+        <div class="fog-3"></div>
+        <div class="mountain-8"></div>
+        <div class="mountain-6"></div>
+        <div class="fog-7"></div>
+        <div class="fog-5"></div>
         <div class="website-text">wedsite</div>
-        <div class="mountain-5  "></div>
+        <div class="mountain-5"></div>
       </div>
       
       <!-- 高層山脈 -->
       <div class="mountain-high">
-        <div class="mountain-3  "></div>
-        <div class="mountain-1  "></div>
-        <div class="mountain-4  "></div>
-        <div class="fog-1  "></div>
-        <div class="mountain-2  "></div>
+        <div class="mountain-3"></div>
+        <div class="mountain-1"></div>
+        <div class="mountain-4"></div>
+        <div class="fog-1"></div>
+        <div class="mountain-2"></div>
         <div class="fog-2"></div>
-        <div class="modern-text  ">modern</div>
+        <div class="modern-text">modern</div>
       </div>
+      
+      <div class="sunshine"></div>
     </div>
   </div>
 </template>
@@ -47,7 +49,12 @@ import parallaxConfig from '../config/parallax-config.json'
 const scale = ref(1)
 
 const updateScale = () => {
+  /*const screenHeight = window.innerHeight
+  console.log(screenHeight)
+  const originalHeight = 2000
+  scale.value = screenHeight / originalHeight*/
   const screenWidth = window.innerWidth
+  console.log(screenWidth)
   const originalWidth = 3077
   scale.value = screenWidth / originalWidth
 }
@@ -60,11 +67,10 @@ const handleMouseMove = (e) => {
 
   for (const layerKey in parallaxConfig) {
     const layer = parallaxConfig[layerKey]
-    const layerMultiplier = layer.layerMultiplier
 
     for (const elementKey in layer.elements) {
       // Skip text elements
-      if (elementKey === 'fog-2' || elementKey === 'website_text' || elementKey === 'modern_text') {
+      if (elementKey === 'fog1' || elementKey === 'fog2' || elementKey === 'mountain_3' || elementKey === 'mountain_10' || elementKey === 'modern_text' || elementKey === 'website_text') {
         continue
       }
 
@@ -72,10 +78,10 @@ const handleMouseMove = (e) => {
       // Use replace to handle keys like 'mountain_10' becoming 'mountain-10'
       const el = document.querySelector(`.${elementKey.replace(/_/g, '-')}`)
       
-      if (el) {
+      if (el && elementConfig.speedX !== undefined && elementConfig.speedY !== undefined) {
         const { speedX, speedY } = elementConfig
-        const x = (mouseX * speedX * layerMultiplier)
-        const y = (mouseY * speedY * layerMultiplier)
+        const x = (mouseX * speedX * 0.8)
+        const y = (mouseY * speedY * 0.5)
         el.style.transform = `translateX(${x}px) translateY(${y}px)`
       }
     }
@@ -83,18 +89,6 @@ const handleMouseMove = (e) => {
 }
 
 onMounted(() => {
-  for (const layerKey in parallaxConfig) {
-    const layer = parallaxConfig[layerKey]
-    for (const elementKey in layer.elements) {
-      const elementConfig = layer.elements[elementKey]
-      const el = document.querySelector(`.${elementKey.replace(/_/g, '-')}`)
-      
-      if (el) {
-        el.style.left = `${elementConfig.originalX}px`
-        el.style.top = `${elementConfig.originalY}px`
-      }
-    }
-  }
   updateScale()
   document.addEventListener('mousemove', handleMouseMove)
 })
@@ -115,7 +109,6 @@ onUnmounted(() => {
     position: relative;
     width: 100vw;
     min-height: 100vh;
-    overflow-x: hidden;
 }
 
 .mountain-container {
@@ -130,7 +123,7 @@ onUnmounted(() => {
 /* 背景層 */
 .background {
     position: absolute;
-    top: -1531px;
+    top: -1601px;
     left: -1199px;
     width: 5682px;
     height: 3650px;
@@ -143,7 +136,7 @@ onUnmounted(() => {
 /* 霧氣層 */
 .fog-6 {
     position: absolute;
-    top: 1003px;
+    top: 1500px;
     left: -274px;
     width: 3635px;
     height: 1253px;
@@ -219,7 +212,7 @@ onUnmounted(() => {
 
 .fog-3 {
     position: absolute;
-    top: 304px;
+    top: 404px;
     left: 423px;
     width: 2755px;
     height: 1392px;
@@ -320,7 +313,7 @@ onUnmounted(() => {
 .mountain-1 {
     position: absolute;
     top: 20px;
-    left: -216px;
+    left: -260px;
     width: 1258px;
     height: 2300px;
     background-image: url('/img/mountain_1.png');
@@ -384,6 +377,18 @@ onUnmounted(() => {
     line-height: 1.32em;
     color: #FFFFFF;
     z-index: 7;
+}
+
+.sunshine {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1025px;
+    height: 850px;
+    background-image: url('/img/sun_rays.png');
+    background-size: cover;
+    background-position: center;
+    z-index: 8;
 }
 
 

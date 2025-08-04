@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三角形調色盤</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        #canvas {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            cursor: crosshair;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .info-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .color-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .color-component {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .color-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hex-code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>三角形調色盤</h1>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #AD3D91;"></div>
+                <span>A色 (紫紅)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #3DAD9F;"></div>
+                <span>B色 (綠)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #A3AD3D;"></div>
+                <span>C色 (黃綠)</span>
+            </div>
+        </div>
+        
+        <canvas id="canvas" width="400" height="400"></canvas>
+        
+        <div class="info-panel">
+            <div class="color-info">
+                <div class="color-component">
+                    <div>A色 (紅)</div>
+                    <div id="colorA">0%</div>
+                </div>
+                <div class="color-component">
+                    <div>B色 (綠)</div>
+                    <div id="colorB">0%</div>
+                </div>
+                <div class="color-component">
+                    <div>C色 (藍)</div>
+                    <div id="colorC">0%</div>
+                </div>
+                <div class="hex-code" id="hexCode">0x000000</div>
+                <div class="color-preview" id="colorPreview"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 三個頂點顏色 (三分色互補 - 色環中相差120度)
+        const colorA = { r: 173, g: 61, b: 145 };   // 紫紅色 #AD3D91
+        const colorB = { r: 61, g: 173, b: 159 };   // 綠色 #3DAD9F  
+        const colorC = { r: 163, g: 173, b: 61 };   // 黃綠色 #A3AD3D
+        
+        // 三角形頂點座標
+        const triangle = {
+            A: { x: 200, y: 50 },   // 頂部
+            B: { x: 50, y: 350 },   // 左下
+            C: { x: 350, y: 350 }   // 右下
+        };
+        
+        // 計算重心座標
+        function getBarycentricCoordinates(point, triangle) {
+            const { A, B, C } = triangle;
+            const { x, y } = point;
+            
+            const denominator = (B.y - C.y) * (A.x - C.x) + (C.x - B.x) * (A.y - C.y);
+            const a = ((B.y - C.y) * (x - C.x) + (C.x - B.x) * (y - C.y)) / denominator;
+            const b = ((C.y - A.y) * (x - C.x) + (A.x - C.x) * (y - C.y)) / denominator;
+            const c = 1 - a - b;
+            
+            return { a, b, c };
+        }
+        
+        // 檢查點是否在三角形內
+        function isPointInTriangle(point, triangle) {
+            const coords = getBarycentricCoordinates(point, triangle);
+            return coords.a >= 0 && coords.b >= 0 && coords.c >= 0;
+        }
+        
+        // 混合顏色
+        function mixColors(coords, colorA, colorB, colorC) {
+            const r = Math.round(coords.a * colorA.r + coords.b * colorB.r + coords.c * colorC.r);
+            const g = Math.round(coords.a * colorA.g + coords.b * colorB.g + coords.c * colorC.g);
+            const b = Math.round(coords.a * colorA.b + coords.b * colorB.b + coords.c * colorC.b);
+            
+            return { r, g, b };
+        }
+        
+        // 繪製三角形調色盤
+        function drawTrianglePalette() {
+            const imageData = ctx.createImageData(canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const point = { x, y };
+                    
+                    if (isPointInTriangle(point, triangle)) {
+                        const coords = getBarycentricCoordinates(point, triangle);
+                        const color = mixColors(coords, colorA, colorB, colorC);
+                        
+                        const index = (y * canvas.width + x) * 4;
+                        data[index] = color.r;     // R
+                        data[index + 1] = color.g; // G
+                        data[index + 2] = color.b; // B
+                        data[index + 3] = 255;     // A
+                    }
+                }
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+            
+            // 繪製三角形邊框
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(triangle.A.x, triangle.A.y);
+            ctx.lineTo(triangle.B.x, triangle.B.y);
+            ctx.lineTo(triangle.C.x, triangle.C.y);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // 繪製頂點
+            const vertices = [
+                { pos: triangle.A, color: `rgb(${colorA.r}, ${colorA.g}, ${colorA.b})` },
+                { pos: triangle.B, color: `rgb(${colorB.r}, ${colorB.g}, ${colorB.b})` },
+                { pos: triangle.C, color: `rgb(${colorC.r}, ${colorC.g}, ${colorC.b})` }
+            ];
+            
+            vertices.forEach(vertex => {
+                ctx.fillStyle = vertex.color;
+                ctx.beginPath();
+                ctx.arc(vertex.pos.x, vertex.pos.y, 8, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+        
+        // 更新顏色資訊
+        function updateColorInfo(point) {
+            if (!isPointInTriangle(point, triangle)) return;
+            
+            const coords = getBarycentricCoordinates(point, triangle);
+            const color = mixColors(coords, colorA, colorB, colorC);
+            
+            // 更新百分比
+            document.getElementById('colorA').textContent = Math.round(coords.a * 100) + '%';
+            document.getElementById('colorB').textContent = Math.round(coords.b * 100) + '%';
+            document.getElementById('colorC').textContent = Math.round(coords.c * 100) + '%';
+            
+            // 更新十六進制顏色碼
+            const hex = `0x${color.r.toString(16).padStart(2, '0')}${color.g.toString(16).padStart(2, '0')}${color.b.toString(16).padStart(2, '0')}`.toUpperCase();
+            document.getElementById('hexCode').textContent = hex;
+            
+            // 更新顏色預覽
+            const colorPreview = document.getElementById('colorPreview');
+            colorPreview.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
+        }
+        
+        // 事件監聽器
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const point = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            
+            updateColorInfo(point);
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const point = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            
+            if (isPointInTriangle(point, triangle)) {
+                updateColorInfo(point);
+            }
+        });
+        
+        // 初始化
+        drawTrianglePalette();
+        
+        // 設定初始顏色為三角形中心
+        const center = {
+            x: (triangle.A.x + triangle.B.x + triangle.C.x) / 3,
+            y: (triangle.A.y + triangle.B.y + triangle.C.y) / 3
+        };
+        updateColorInfo(center);
+    </script>
+</body>
+</html>
